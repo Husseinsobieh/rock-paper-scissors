@@ -8,7 +8,7 @@ const getHumanChoice = () => {
   return prompt("Please enter your choice:");
 };
 
-const playRound = (humanChoice, computerChoice, humanScore, computerScore) => {
+const playRound = (humanChoice, computerChoice) => {
   humanChoice = humanChoice.toLowerCase();
   computerChoice = computerChoice.toLowerCase();
 
@@ -46,8 +46,6 @@ const playGame = () => {
     let outcome = playRound(
       getHumanChoice(),
       getComputerChoice(),
-      humanScore,
-      computerScore
     );
     if (outcome === 1) humanScore++;
     else if (outcome === -1) computerScore++;
