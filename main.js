@@ -1,57 +1,91 @@
-const getComputerChoice = () => {
-  const possibleOutput = ["rock", "paper", "scissors"];
+const bodyContainer = document.querySelector("body");
+const scoreBoard = document.querySelector("#score");
+const rockBtn = document.querySelector("#rock");
+const paperBtn = document.querySelector("#paper");
+const scissorsBtn = document.querySelector("#scissors");
+const gameStartBtn = document.querySelector("#game");
+const outcomeStatus = document.querySelector("#outcome");
+let humanScore = 0;
+let computerScore = 0;
+let outcome = 0;
 
-  return possibleOutput[Math.floor(Math.random() * 3)];
-};
-
-const getHumanChoice = () => {
-  return prompt("Please enter your choice:");
+const winConditions = {
+  rock: "scissors",
+  paper: "rock",
+  scissors: "paper",
 };
 
 const playRound = (humanChoice, computerChoice) => {
   humanChoice = humanChoice.toLowerCase();
   computerChoice = computerChoice.toLowerCase();
 
-  if (humanChoice === "rock" && computerChoice === "scissors") {
-    console.log("You win! Rock beats Scissors");
+  if (humanChoice === computerChoice) {
+    console.log("You draw!");
+    return 0;
+  }
+  if (winConditions[humanChoice] === computerChoice) {
+    console.log(`You win! ${humanChoice} beats ${computerChoice}`);
     return 1;
-  } else if (humanChoice === "rock" && computerChoice === "paper") {
-    console.log("You lose! Paper beats Rock");
-    return -1;
-  } else if (humanChoice === "rock" && computerChoice === "rock") {
-    console.log("You draw! Rock draws Rock");
-  } else if (humanChoice === "paper" && computerChoice === "scissors") {
-    console.log("You lose! Scissors beats Paper");
-    return -1;
-  } else if (humanChoice === "paper" && computerChoice === "paper") {
-    console.log("You draw! Paper draws Paper");
-  } else if (humanChoice === "paper" && computerChoice === "rock") {
-    console.log("You win! Paper beats Rock");
-    return 1;
-  } else if (humanChoice === "scissors" && computerChoice === "scissors") {
-    console.log("You draw! Scissors draws Scissors");
-  } else if (humanChoice === "scissors" && computerChoice === "paper") {
-    console.log("You win! Scissors beats Paper");
-    return 1;
-  } else if (humanChoice === "scissors" && computerChoice === "rock") {
-    console.log("You lose! Rock beats Scissors");
+  } else {
+    console.log(`You lose! ${humanChoice} beats ${computerChoice}`);
     return -1;
   }
 };
 
-const playGame = () => {
-  let humanScore = 0;
-  let computerScore = 0;
-  while (humanScore < 5 && computerScore < 5) {
-    let outcome = playRound(
-      getHumanChoice(),
-      getComputerChoice(),
-    );
-    if (outcome === 1) humanScore++;
-    else if (outcome === -1) computerScore++;
-    console.log(`Score: ${humanScore}:${computerScore}`);
+const gameOutcome = (humanScore, computerScore) => {
+  if (humanScore > computerScore) {
+    outcomeStatus.textContent = "Victory";
+  } else {
+    outcomeStatus.textContent = "Defeat";
   }
-  humanScore === 5 ? console.log("Victory") : console.log("Defeat");
 };
 
-playGame();
+const getComputerChoice = () => {
+  const possibleOutput = ["rock", "paper", "scissors"];
+
+  return possibleOutput[Math.floor(Math.random() * 3)];
+};
+
+const startGame = () => {
+  humanScore = 0;
+  computerScore = 0;
+  scoreBoard.textContent = `${humanScore} - ${computerScore}`;
+  outcomeStatus.textContent = "";
+  rockBtn.disabled = false;
+  paperBtn.disabled = false;
+  scissorsBtn.disabled = false;
+};
+
+const disableBtns = () => {
+  rockBtn.disabled = true;
+  paperBtn.disabled = true;
+  scissorsBtn.disabled = true;
+};
+
+const handleScoreChange = (humanChoice) => {
+  outcome = playRound(humanChoice, getComputerChoice());
+  if (outcome === 1) humanScore++;
+  else if (outcome === -1) computerScore++;
+  scoreBoard.textContent = `${humanScore} - ${computerScore}`;
+
+  if (humanScore === 5 || computerScore === 5) {
+    setTimeout(() => {
+      gameOutcome(humanScore, computerScore);
+      disableBtns();
+    }, 10);
+  }
+};
+
+rockBtn.addEventListener("click", () => {
+  handleScoreChange("rock");
+});
+paperBtn.addEventListener("click", () => {
+  handleScoreChange("paper");
+});
+scissorsBtn.addEventListener("click", () => {
+  handleScoreChange("scissors");
+});
+
+gameStartBtn.addEventListener("click", startGame);
+
+disableBtns();
